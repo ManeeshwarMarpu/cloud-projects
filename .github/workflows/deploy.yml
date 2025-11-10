@@ -1,0 +1,40 @@
+name: Build & Push to ECR
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  push-images:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | \
+          docker login --username AWS --password-stdin 909817712145.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Build & Push Backend
+        run: |
+          cd cloud-projects/real-time-stock-dashboard/backend
+          docker build -t backend:latest .
+          docker tag backend:latest 909817712145.dkr.ecr.us-east-1.amazonaws.com/backend:latest
+          docker push 909817712145.dkr.ecr.us-east-1.amazonaws.com/backend:latest
+          cd ../../../
+
+      - name: Build & Push Frontend
+        run: |
+          cd cloud-projects/real-time-stock-dashboard/frontend
+          docker build -t frontend:latest .
+          docker tag frontend:latest 909817712145.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
+          docker push 909817712145.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
