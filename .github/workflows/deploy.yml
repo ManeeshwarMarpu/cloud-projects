@@ -23,18 +23,18 @@ jobs:
         run: |
           aws ecr get-login-password --region us-east-1 | \
           docker login --username AWS --password-stdin 909817712145.dkr.ecr.us-east-1.amazonaws.com
-
       - name: Build & Push Backend
         run: |
-          cd cloud-projects/real-time-stock-dashboard/backend
+          cd real-time-stock-dashboard/backend
           docker build -t backend:latest .
           docker tag backend:latest 909817712145.dkr.ecr.us-east-1.amazonaws.com/backend:latest
           docker push 909817712145.dkr.ecr.us-east-1.amazonaws.com/backend:latest
-          cd ../../../
-
+          cd ../../
+      
       - name: Build & Push Frontend
         run: |
-          cd cloud-projects/real-time-stock-dashboard/frontend
+          cd real-time-stock-dashboard/frontend
           docker build -t frontend:latest .
           docker tag frontend:latest 909817712145.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
           docker push 909817712145.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
+
